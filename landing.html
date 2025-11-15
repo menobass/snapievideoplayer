@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3speak Video Player - Decentralized Video Streaming</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #15202b 0%, #1a2634 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        
+        .logo-container {
+            margin-bottom: 30px;
+        }
+        
+        .logo-container img {
+            height: 80px;
+            margin: 0 10px;
+        }
+        
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #4a9eff 0%, #7b5cff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .tagline {
+            font-size: 1.4em;
+            color: #aaa;
+            margin-bottom: 40px;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 60px;
+        }
+        
+        .btn {
+            padding: 15px 35px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 600;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #4a9eff 0%, #7b5cff 100%);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(74, 158, 255, 0.3);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            transition: transform 0.2s, background 0.2s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.4em;
+            margin-bottom: 10px;
+            color: #4a9eff;
+        }
+        
+        .feature-card p {
+            color: #ccc;
+            line-height: 1.6;
+        }
+        
+        .about-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .about-section h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #4a9eff;
+        }
+        
+        .about-section p {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #ccc;
+            margin-bottom: 15px;
+        }
+        
+        .links-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .links-section h2 {
+            font-size: 2em;
+            margin-bottom: 30px;
+            color: #4a9eff;
+            text-align: center;
+        }
+        
+        .link-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .link-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            transition: all 0.2s;
+        }
+        
+        .link-card:hover {
+            background: rgba(74, 158, 255, 0.1);
+            border-color: #4a9eff;
+            transform: translateY(-3px);
+        }
+        
+        .link-card .icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .link-card .label {
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+        
+        .link-card .description {
+            font-size: 0.9em;
+            color: #999;
+            margin-top: 5px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 60px;
+        }
+        
+        footer a {
+            color: #4a9eff;
+            text-decoration: none;
+        }
+        
+        footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .demo-video {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 40px 0;
+        }
+        
+        .demo-video h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #4a9eff;
+        }
+        
+        .demo-video iframe {
+            width: 100%;
+            height: 480px;
+            border: none;
+            border-radius: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            
+            .tagline {
+                font-size: 1.1em;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .demo-video iframe {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <img src="/assets/3slogo.webp" alt="3speak Logo">
+            </div>
+            <h1>3speak Video Player</h1>
+            <p class="tagline">Decentralized Video Streaming on Hive Blockchain</p>
+            
+            <div class="cta-buttons">
+                <a href="/embed-demo.html" class="btn btn-primary">📺 View Demo</a>
+                <a href="https://github.com/menobass/snapievideoplayer" target="_blank" class="btn btn-secondary">⭐ GitHub</a>
+            </div>
+        </header>
+
+        <div class="demo-video">
+            <h3>🎬 Try the Player</h3>
+            <iframe 
+                src="/watch?v=meno/1czchhmr&mode=iframe" 
+                allowfullscreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+            </iframe>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">🎥</div>
+                <h3>HLS Streaming</h3>
+                <p>Adaptive quality streaming with automatic bitrate selection for smooth playback on any connection.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">⚙️</div>
+                <h3>Quality Control</h3>
+                <p>Manual quality selector lets viewers choose their preferred resolution from 360p to 1080p+.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🔄</div>
+                <h3>IPFS Redundancy</h3>
+                <p>Automatic fallback between multiple IPFS gateways ensures videos always load.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Mobile Ready</h3>
+                <p>Fully responsive design works perfectly on desktop, tablet, and mobile devices.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🚀</div>
+                <h3>Lightning Fast</h3>
+                <p>Optimized delivery through dedicated IPFS gateways for instant video startup.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🔓</div>
+                <h3>Open Source</h3>
+                <p>100% open source and free to use. Built with Video.js and modern web standards.</p>
+            </div>
+        </div>
+
+        <div class="about-section">
+            <h2>What is 3speak?</h2>
+            <p>
+                3speak is a decentralized video platform built on the Hive blockchain. Unlike traditional video platforms, 
+                3speak gives creators full ownership of their content and rewards them directly through cryptocurrency.
+            </p>
+            <p>
+                This player is the next generation video player for 3speak, designed to provide a fast, reliable, 
+                and feature-rich viewing experience. Videos are stored on IPFS (InterPlanetary File System), 
+                making them censorship-resistant and permanently accessible.
+            </p>
+            <p>
+                Built with modern web technologies including Video.js, this player supports both the legacy 3speak 
+                video collection and the new direct-upload system for frontends.
+            </p>
+        </div>
+
+        <div class="links-section">
+            <h2>🔗 Important Links</h2>
+            <div class="link-grid">
+                <a href="https://3speak.tv" target="_blank" class="link-card">
+                    <div class="icon">🎬</div>
+                    <div class="label">3speak.tv</div>
+                    <div class="description">Video Platform</div>
+                </a>
+                
+                <a href="https://hive.io" target="_blank" class="link-card">
+                    <div class="icon">⛓️</div>
+                    <div class="label">Hive.io</div>
+                    <div class="description">Blockchain</div>
+                </a>
+                
+                <a href="https://peakd.com" target="_blank" class="link-card">
+                    <div class="icon">📝</div>
+                    <div class="label">PeakD</div>
+                    <div class="description">Hive Frontend</div>
+                </a>
+                
+                <a href="https://hive.blog" target="_blank" class="link-card">
+                    <div class="icon">✍️</div>
+                    <div class="label">Hive.blog</div>
+                    <div class="description">Hive Frontend</div>
+                </a>
+                
+                <a href="https://ecency.com" target="_blank" class="link-card">
+                    <div class="icon">🌐</div>
+                    <div class="label">Ecency</div>
+                    <div class="description">Hive Frontend</div>
+                </a>
+                
+                <a href="https://snapie.xyz" target="_blank" class="link-card">
+                    <div class="icon">📱</div>
+                    <div class="label">Snapie</div>
+                    <div class="description">Short-form Frontend</div>
+                </a>
+                
+                <a href="https://github.com/menobass/snapievideoplayer" target="_blank" class="link-card">
+                    <div class="icon">💻</div>
+                    <div class="label">GitHub Repo</div>
+                    <div class="description">Source Code</div>
+                </a>
+                
+                <a href="/embed-demo.html" class="link-card">
+                    <div class="icon">🎮</div>
+                    <div class="label">Live Demo</div>
+                    <div class="description">Try It Out</div>
+                </a>
+                
+                <a href="https://ipfs.io" target="_blank" class="link-card">
+                    <div class="icon">📦</div>
+                    <div class="label">IPFS</div>
+                    <div class="description">Storage Layer</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="about-section">
+            <h2>🛠️ For Developers</h2>
+            <p>
+                This player can be easily embedded into any website or application. We support two URL formats:
+            </p>
+            <p style="font-family: monospace; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 6px;">
+                <strong>Legacy videos:</strong> /watch?v=owner/permlink<br>
+                <strong>Direct uploads:</strong> /embed?v=owner/permlink<br>
+                <strong>Minimal embed mode:</strong> Add &mode=iframe
+            </p>
+            <p>
+                Check out our <a href="/embed-demo.html" style="color: #4a9eff;">embedding demo</a> for complete documentation 
+                and code examples, or visit our <a href="https://github.com/menobass/snapievideoplayer" target="_blank" style="color: #4a9eff;">GitHub repository</a>.
+            </p>
+        </div>
+
+        <footer>
+            <p>
+                Built with ❤️ for the Hive community by <a href="https://peakd.com/@meno" target="_blank">@meno</a>
+            </p>
+            <p style="margin-top: 10px;">
+                Powered by <a href="https://videojs.com" target="_blank">Video.js</a> • 
+                Hosted on <a href="https://ipfs.io" target="_blank">IPFS</a> • 
+                Secured by <a href="https://hive.io" target="_blank">Hive</a>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -158,6 +158,31 @@ h3 {
   color: #333;
 }
 
+/* Iframe Mode - Minimal UI for embedding */
+body.iframe-mode {
+  padding: 0;
+  background: #000;
+}
+
+body.iframe-mode .container {
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: #000;
+}
+
+body.iframe-mode .header-logo {
+  display: none;
+}
+
+body.iframe-mode .info-panel {
+  display: none;
+}
+
+body.iframe-mode .player-wrapper {
+  margin-bottom: 0;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .container {

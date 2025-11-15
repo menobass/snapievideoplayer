@@ -14,9 +14,6 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Serve static files from dist folder
-app.use(express.static(path.join(__dirname, 'dist')));
-
 // Helper: Transform IPFS URL to gateway URL with fallback
 function transformIPFSUrl(ipfsUrl, useFallback = false) {
   const gateway = useFallback ? process.env.IPFS_GATEWAY_FALLBACK : process.env.IPFS_GATEWAY;
@@ -226,10 +223,25 @@ app.post('/api/view', async (req, res) => {
   }
 });
 
+// Serve landing page for root
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'landing.html'));
+});
+
 // Serve frontend for /watch and /embed routes
 app.get(['/watch', '/embed'], (req, res) => {
+  const videoParam = req.query.v;
+  
+  // If no video parameter, redirect to landing page
+  if (!videoParam) {
+    return res.redirect('/');
+  }
+  
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
+
+// Serve static files from dist folder (after specific routes)
+app.use(express.static(path.join(__dirname, 'dist')));
 
 // 404 handler
 app.use((req, res) => {

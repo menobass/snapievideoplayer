@@ -37,6 +37,14 @@ module.exports = {
         {
           from: 'assets',
           to: 'assets'
+        },
+        {
+          from: 'embed-demo.html',
+          to: 'embed-demo.html'
+        },
+        {
+          from: 'landing.html',
+          to: 'landing.html'
         }
       ]
     })

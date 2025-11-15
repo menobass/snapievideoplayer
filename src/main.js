@@ -100,7 +100,8 @@ function getUrlParams() {
   const params = new URLSearchParams(window.location.search);
   return {
     video: params.get('v'),
-    type: window.location.pathname.includes('/embed') ? 'embed' : 'legacy'
+    type: window.location.pathname.includes('/embed') ? 'embed' : 'legacy',
+    mode: params.get('mode') // 'iframe' for minimal embedding UI
   };
 }
 
@@ -195,6 +196,9 @@ async function loadVideoFromData(videoData) {
   const title = videoData.title || `${videoData.owner}/${videoData.permlink}`;
   updateCurrentSource(title);
   
+  // Update view count
+  updateViewCount(videoData.views);
+  
   // Update info panel
   if (videoData.isPlaceholder) {
     updatePlayerState(`Placeholder (${videoData.status})`);
@@ -220,6 +224,13 @@ function updatePlayerState(state) {
   }
 }
 
+function updateViewCount(count) {
+  const viewElement = document.getElementById('view-count');
+  if (viewElement) {
+    viewElement.textContent = count ? count.toLocaleString() : '-';
+  }
+}
+
 // Show error message
 function showError(message) {
   const container = document.querySelector('.container');
@@ -241,7 +252,13 @@ document.addEventListener('DOMContentLoaded', async function() {
   initializePlayer();
 
   // Get URL parameters
-  const { video, type } = getUrlParams();
+  const { video, type, mode } = getUrlParams();
+  
+  // Enable iframe mode if requested
+  if (mode === 'iframe') {
+    document.body.classList.add('iframe-mode');
+    console.log('Iframe mode enabled - minimal UI');
+  }
   
   if (!video) {
     showError('No video specified. URL should be: /watch?v=owner/permlink or /embed?v=owner/permlink');
