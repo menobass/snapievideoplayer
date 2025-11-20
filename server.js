@@ -41,11 +41,8 @@ function getPlaceholderVideo(status) {
   
   switch (status?.toLowerCase()) {
     case 'uploading':
-    case 'encoding':
+    case 'processing':
       return transformIPFSUrl(process.env.PLACEHOLDER_PROCESSING_CID);
-    
-    case 'finalizing':
-      return transformIPFSUrl(process.env.PLACEHOLDER_FINALIZING_CID);
     
     case 'failed':
       return transformIPFSUrl(process.env.PLACEHOLDER_FAILED_CID);
@@ -144,6 +141,7 @@ app.get('/api/embed', async (req, res) => {
     
     let videoUrls;
     let isPlaceholder = false;
+    let thumbnail = null;
     
     // Check status and determine which video to serve
     if (video.status === 'published' && video.manifest_cid) {
@@ -154,6 +152,11 @@ app.get('/api/embed', async (req, res) => {
         primary: `${gateway}/${video.manifest_cid}/manifest.m3u8`,
         fallback: `${gatewayFallback}/${video.manifest_cid}/manifest.m3u8`
       };
+      
+      // Use thumbnail if available
+      if (video.thumbnail_url) {
+        thumbnail = video.thumbnail_url;
+      }
     } else {
       // Serve placeholder based on status
       const placeholderUrl = getPlaceholderVideo(video.status);
@@ -175,14 +178,17 @@ app.get('/api/embed', async (req, res) => {
       type: 'embed',
       owner: video.owner,
       permlink: video.permlink,
+      title: video.originalFilename || `${video.owner}/${video.permlink}`,
       status: video.status,
       isPlaceholder: isPlaceholder,
       videoUrl: videoUrls.primary,
       videoUrlFallback: videoUrls.fallback,
-      thumbnailUrl: video.thumbnail_url || null,
+      thumbnail: thumbnail,
       duration: video.duration || 0,
       views: video.views || 0,
+      short: video.short || false,
       createdAt: video.createdAt,
+      updatedAt: video.updatedAt,
       encodingProgress: video.encodingProgress || 0
     });
     
