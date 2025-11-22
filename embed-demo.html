@@ -303,6 +303,12 @@
             <h2>6. 📱 Handling Vertical Videos</h2>
             <p><strong>Philosophy:</strong> The 3speak player automatically detects and adapts to vertical videos! 
             <strong>Horizontal videos use 16:9 containers, vertical videos expand naturally</strong> to show the full content without cropping.</p>
+
+            <div style="background: #d4471c; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #ff6b35;">
+                <strong style="color: #fff;">⚠️ CRITICAL FOR 3SPEAK DEVELOPERS:</strong><br>
+                <strong style="color: #ffeb3b;">Your frontend must provide taller containers for vertical videos</strong> or users will see cropped content!<br>
+                The player detects orientation internally, but <strong>you control the iframe height</strong>.
+            </div>
             
             <div style="background: #333; border-radius: 8px; padding: 20px; margin: 20px 0;">
                 <strong style="color: #4a9eff;">Demo Video:</strong> <code>vempromundo/hkh2vzzf</code> (Vertical content)
@@ -491,12 +497,16 @@ async function embedVideo(videoId, containerId) {
 }</code>
             </div>
 
-            <h3>3speak JavaScript Integration</h3>
+            <h3>🔥 COMPLETE 3speak Integration Solution</h3>
             <div class="code-block">
-                <code>// Detect video type and optimize embedding
+                <code>// STEP 1: Detect vertical videos from your video metadata
 class ThreeSpeakEmbed {
     static async embed(author, permlink, container, options = {}) {
         const videoId = `${author}/${permlink}`;
+        
+        // Get video metadata to detect orientation
+        const metadata = await this.getVideoMetadata(author, permlink);
+        const isVertical = metadata.height > metadata.width;
         
         // Determine URL format based on video type
         const isLegacy = await this.checkLegacyVideo(author, permlink);
@@ -505,15 +515,42 @@ class ThreeSpeakEmbed {
         const iframe = document.createElement('iframe');
         iframe.src = `https://play.3speak.tv${baseUrl}?v=${videoId}&mode=iframe`;
         iframe.width = '100%';
-        iframe.height = options.vertical ? '500' : '350';
+        
+        // 🎯 KEY: Adjust height based on orientation
+        if (isVertical) {
+            iframe.height = '600'; // Taller for vertical videos
+            container.className += ' vertical-video-container';
+        } else {
+            iframe.height = '350'; // Standard for horizontal
+            container.className += ' horizontal-video-container';
+        }
+        
         iframe.frameBorder = '0';
         iframe.allowFullscreen = true;
         
         container.appendChild(iframe);
+        return { isVertical, metadata };
+    }
+    
+    // STEP 2: Get video dimensions from your database
+    static async getVideoMetadata(author, permlink) {
+        try {
+            // Replace with your actual API endpoint
+            const response = await fetch(`/api/video-metadata/${author}/${permlink}`);
+            const data = await response.json();
+            return {
+                width: data.width || 1920,
+                height: data.height || 1080,
+                duration: data.duration,
+                title: data.title
+            };
+        } catch (error) {
+            console.warn('Could not fetch metadata, assuming horizontal');
+            return { width: 1920, height: 1080 }; // Default to horizontal
+        }
     }
     
     static async checkLegacyVideo(author, permlink) {
-        // Check if video exists in legacy system
         try {
             const response = await fetch(`/api/watch?v=${author}/${permlink}`);
             return response.ok;
@@ -523,8 +560,117 @@ class ThreeSpeakEmbed {
     }
 }
 
-// Usage in 3speak platform
-ThreeSpeakEmbed.embed('eddiespinod', 'xpztd24i', container, { vertical: true });</code>
+// STEP 3: Usage in your feed/post components
+async function renderVideoPost(post) {
+    const container = document.getElementById(`video-${post.id}`);
+    const result = await ThreeSpeakEmbed.embed(
+        post.author, 
+        post.permlink, 
+        container
+    );
+    
+    // Optional: Add visual indicators
+    if (result.isVertical) {
+        console.log('📱 Rendered vertical video with optimized container');
+    }
+}</code>
+            </div>
+
+            <h3>🛠️ For React/Next.js 3speak Apps</h3>
+            <div class="code-block">
+                <code>// Hook to detect video orientation
+const useVideoOrientation = (author, permlink) => {
+    const [isVertical, setIsVertical] = useState(false);
+    const [loading, setLoading] = useState(true);
+    
+    useEffect(() => {
+        async function detectOrientation() {
+            try {
+                const metadata = await fetch(`/api/video-metadata/${author}/${permlink}`);
+                const data = await metadata.json();
+                setIsVertical(data.height > data.width);
+            } catch (error) {
+                console.warn('Orientation detection failed, defaulting to horizontal');
+                setIsVertical(false);
+            } finally {
+                setLoading(false);
+            }
+        }
+        
+        detectOrientation();
+    }, [author, permlink]);
+    
+    return { isVertical, loading };
+};
+
+// Smart video component
+const ThreeSpeakVideo = ({ author, permlink, className = '' }) => {
+    const { isVertical, loading } = useVideoOrientation(author, permlink);
+    
+    if (loading) {
+        return &lt;div className="video-skeleton"&gt;Loading...&lt;/div&gt;;
+    }
+    
+    const height = isVertical ? '600' : '350';
+    const containerClass = `video-container ${isVertical ? 'vertical' : 'horizontal'} ${className}`;
+    
+    return (
+        &lt;div className={containerClass}&gt;
+            &lt;iframe
+                src={`https://play.3speak.tv/embed?v=${author}/${permlink}&mode=iframe`}
+                width="100%"
+                height={height}
+                frameBorder="0"
+                allowFullScreen
+                title={`Video by ${author}`}
+            /&gt;
+            {isVertical && (
+                &lt;span className="video-badge vertical"&gt;📱 Vertical&lt;/span&gt;
+            )}
+        &lt;/div&gt;
+    );
+};
+
+// Usage in feed
+&lt;ThreeSpeakVideo author="vempromundo" permlink="hkh2vzzf" /&gt;</code>
+            </div>
+
+            <h3>📊 Database Schema for Orientation Detection</h3>
+            <div class="code-block">
+                <code>// Add these fields to your video metadata collection
+{
+  author: "vempromundo",
+  permlink: "hkh2vzzf", 
+  title: "My vertical video",
+  // 🎯 CRITICAL: Store video dimensions
+  video_metadata: {
+    width: 720,   // Video width in pixels
+    height: 1280, // Video height in pixels
+    duration: 45, // Duration in seconds
+    format: "mp4",
+    orientation: "portrait" // Computed: "portrait" | "landscape" | "square"
+  },
+  // Compute orientation when saving video
+  is_vertical: true, // height > width
+  aspect_ratio: 0.5625, // width / height
+  created_at: "2024-11-22T13:25:00Z"
+}
+
+// MongoDB query to find vertical videos
+db.videos.find({ is_vertical: true })
+
+// API endpoint to serve metadata
+app.get('/api/video-metadata/:author/:permlink', (req, res) => {
+  const { author, permlink } = req.params;
+  const video = db.collection('videos').findOne({ author, permlink });
+  
+  res.json({
+    width: video.video_metadata.width,
+    height: video.video_metadata.height,
+    isVertical: video.is_vertical,
+    aspectRatio: video.aspect_ratio
+  });
+});</code>
             </div>
         </div>
 
@@ -546,13 +692,20 @@ const embeddedContent = content.replace(videoRegex, (match, subdomain, route, vi
             </div>
 
             <div style="background: #1a3a5c; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #4a9eff;">
-                <strong style="color: #87ceeb;">💡 Best Practices:</strong><br>
-                • Use <code>&mode=iframe</code> for clean embeds<br>
-                • Choose container height based on content type<br>
-                • <strong>Standard videos:</strong> 300-480px height<br>
-                • <strong>Vertical videos:</strong> 500-600px height<br>
-                • Always include <code>allowfullscreen</code><br>
-                • The player handles aspect ratio - you control layout!
+                <strong style="color: #87ceeb;">💡 Implementation Checklist for 3speak Devs:</strong><br>
+                • ✅ Store video dimensions (width/height) in your database<br>
+                • ✅ Create API endpoint to serve video metadata<br>
+                • ✅ Detect orientation: <code>isVertical = height > width</code><br>
+                • ✅ Use different iframe heights: <strong>600px for vertical, 350px for horizontal</strong><br>
+                • ✅ Add CSS classes for styling: <code>.vertical-video-container</code><br>
+                • ✅ Test with <code>vempromundo/hkh2vzzf</code> (vertical) and <code>meno/1czchhmr</code> (horizontal)<br>
+                • ✅ Always include <code>&mode=iframe</code> for clean embeds
+            </div>
+
+            <div style="background: #2d5a27; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #4caf50;">
+                <strong style="color: #a5d6a7;">🚀 Result: Perfect UX for all video orientations!</strong><br>
+                Your users will see complete videos without cropping, whether horizontal or vertical. 
+                The player does the heavy lifting - you just provide the right container size.
             </div>
         </div>
     </div>
