@@ -81,6 +81,16 @@ h3 {
   width: 100% !important;
   height: 100% !important;
   object-fit: contain !important;
+  transform: none !important; /* Prevent browser rotation issues */
+  transform-origin: center !important; /* Fix rotation anchor point */
+}
+
+/* Special handling for vertical videos to prevent zoom/crop issues */
+.video-js.vertical-video .vjs-tech {
+  object-fit: contain !important;
+  width: 100% !important;
+  height: 100% !important;
+  background-color: black !important; /* Show black letterbox bars */
 }
 
 /* Player Logo Overlay */

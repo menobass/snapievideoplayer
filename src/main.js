@@ -72,6 +72,10 @@ function initializePlayer() {
     updatePlayerState('Ready');
   });
 
+  player.on('loadedmetadata', function() {
+    handleVerticalVideoDetection();
+  });
+
 
 
   player.on('play', function() {
@@ -241,6 +245,26 @@ async function loadVideoFromData(videoData) {
 }
 
 
+
+// Handle vertical video detection and proper scaling
+function handleVerticalVideoDetection() {
+  if (!player) return;
+  
+  const video = player.el().querySelector('video');
+  if (!video || !video.videoWidth || !video.videoHeight) return;
+  
+  const isVertical = video.videoHeight > video.videoWidth;
+  
+  console.log(`Video dimensions: ${video.videoWidth}x${video.videoHeight}, vertical: ${isVertical}`);
+  
+  if (isVertical) {
+    console.log('Detected vertical video - adding vertical-video class');
+    player.addClass('vertical-video');
+  } else {
+    console.log('Detected horizontal video - removing vertical-video class');
+    player.removeClass('vertical-video');
+  }
+}
 
 // Update UI helpers
 function updateCurrentSource(sourceName) {
