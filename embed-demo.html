@@ -298,9 +298,239 @@
             </div>
         </div>
 
+        <!-- Vertical Videos -->
+        <div class="demo-section">
+            <h2>6. 📱 Handling Vertical Videos</h2>
+            <p><strong>Philosophy:</strong> The 3speak player maintains a consistent 16:9 aspect ratio by default (like YouTube/Twitter). 
+            <strong>Your frontend controls the container size</strong> to handle different video orientations optimally.</p>
+            
+            <div style="background: #333; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                <strong style="color: #4a9eff;">Demo Video:</strong> <code>vempromundo/hkh2vzzf</code> (Vertical content)
+            </div>
+
+            <div class="comparison">
+                <div class="comparison-item">
+                    <h3>❌ Standard Container (Shows Letterboxing)</h3>
+                    <div class="video-wrapper">
+                        <iframe 
+                            src="https://play.3speak.tv/embed?v=vempromundo/hkh2vzzf&mode=iframe" 
+                            width="100%" 
+                            height="300"
+                            frameborder="0"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                    <div class="code-block">
+                        <code>height="300" /* Standard height */</code>
+                    </div>
+                </div>
+                
+                <div class="comparison-item">
+                    <h3>✅ Taller Container (Better Experience)</h3>
+                    <div class="video-wrapper">
+                        <iframe 
+                            src="https://play.3speak.tv/embed?v=vempromundo/hkh2vzzf&mode=iframe" 
+                            width="100%" 
+                            height="600"
+                            frameborder="0"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                    <div class="code-block">
+                        <code>height="600" /* Taller for vertical */</code>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 30px;">CSS Container Strategies</h3>
+            <div class="code-block">
+                <code>/* Standard container for horizontal/mixed content */
+.video-container.standard {
+    max-width: 800px;
+    margin: 20px auto;
+    aspect-ratio: 16 / 9;
+}
+
+/* Vertical container for portrait videos */
+.video-container.vertical {
+    max-width: 400px;
+    margin: 20px auto; 
+    aspect-ratio: 9 / 16; /* Portrait ratio */
+}
+
+/* Mobile-responsive */
+@media (max-width: 768px) {
+    .video-container.vertical {
+        max-width: 100%;
+    }
+}</code>
+            </div>
+
+            <h3 style="margin-top: 30px;">JavaScript Dynamic Detection</h3>
+            <div class="code-block">
+                <code>// Example: Auto-adjust container based on content
+async function embedVideo(videoId, containerId) {
+    const container = document.getElementById(containerId);
+    const iframe = document.createElement('iframe');
+    
+    // You could detect orientation via API or video metadata
+    const isVertical = await detectVerticalVideo(videoId);
+    
+    if (isVertical) {
+        container.className = 'video-container vertical';
+        iframe.height = '600';
+    } else {
+        container.className = 'video-container standard';
+        iframe.height = '300';
+    }
+    
+    iframe.src = `https://play.3speak.tv/embed?v=${videoId}&mode=iframe`;
+    iframe.width = '100%';
+    iframe.frameBorder = '0';
+    iframe.allowFullscreen = true;
+    
+    container.appendChild(iframe);
+}</code>
+            </div>
+
+            <h3 style="margin-top: 30px;">React Component Example</h3>
+            <div class="code-block">
+                <code>const ThreeSpeakPlayer = ({ 
+    videoId, 
+    layout = 'standard' // 'standard' | 'vertical'
+}) => {
+    const height = layout === 'vertical' ? '600' : '300';
+    const containerClass = `video-container ${layout}`;
+    
+    return (
+        &lt;div className={containerClass}&gt;
+            &lt;iframe
+                src={`https://play.3speak.tv/embed?v=${videoId}&mode=iframe`}
+                width="100%"
+                height={height}
+                style={{ border: 'none', borderRadius: '8px' }}
+                allowFullScreen
+            /&gt;
+        &lt;/div&gt;
+    );
+};
+
+// Usage
+&lt;ThreeSpeakPlayer videoId="vempromundo/hkh2vzzf" layout="vertical" /&gt;</code>
+            </div>
+        </div>
+
+        <!-- 3speak Platform Integration -->
+        <div class="demo-section">
+            <h2>7. 🌐 For 3speak Platform Integration</h2>
+            <p>Special guidance for integrating videos within the 3speak ecosystem using the <code>/watch</code> format:</p>
+            
+            <div style="background: #333; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                <strong style="color: #4a9eff;">Demo Video:</strong> <code>eddiespinod/xpztd24i</code> (Eddie's vertical test)
+            </div>
+
+            <h3>3speak Feed Integration</h3>
+            <div class="video-wrapper" style="max-width: 400px; margin: 20px auto;">
+                <iframe 
+                    src="https://play.3speak.tv/watch?v=eddiespinod/xpztd24i&mode=iframe" 
+                    width="100%" 
+                    height="600"
+                    frameborder="0"
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+            <div class="code-block">
+                <code>// 3speak platform: Use /watch format for legacy videos
+&lt;iframe 
+    src="https://play.3speak.tv/watch?v=eddiespinod/xpztd24i&mode=iframe"
+    width="100%" 
+    height="600"
+    frameborder="0" 
+    allowfullscreen&gt;
+&lt;/iframe&gt;
+
+// For direct uploads: Use /embed format  
+&lt;iframe 
+    src="https://play.3speak.tv/embed?v=vempromundo/hkh2vzzf&mode=iframe"
+    width="100%" 
+    height="600"
+    frameborder="0"
+    allowfullscreen&gt;
+&lt;/iframe&gt;</code>
+            </div>
+
+            <h3>Platform-Specific CSS</h3>
+            <div class="code-block">
+                <code>/* 3speak mobile feed style */
+.threespeak-feed {
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.threespeak-post {
+    background: #2a2a2a;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.threespeak-video {
+    width: 100%;
+    height: 350px; /* Balanced for mixed content */
+    border-radius: 8px;
+}
+
+/* For vertical video emphasis */
+.threespeak-post.vertical .threespeak-video {
+    height: 500px;
+    max-width: 350px;
+    margin: 0 auto;
+}</code>
+            </div>
+
+            <h3>3speak JavaScript Integration</h3>
+            <div class="code-block">
+                <code>// Detect video type and optimize embedding
+class ThreeSpeakEmbed {
+    static async embed(author, permlink, container, options = {}) {
+        const videoId = `${author}/${permlink}`;
+        
+        // Determine URL format based on video type
+        const isLegacy = await this.checkLegacyVideo(author, permlink);
+        const baseUrl = isLegacy ? '/watch' : '/embed';
+        
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://play.3speak.tv${baseUrl}?v=${videoId}&mode=iframe`;
+        iframe.width = '100%';
+        iframe.height = options.vertical ? '500' : '350';
+        iframe.frameBorder = '0';
+        iframe.allowFullscreen = true;
+        
+        container.appendChild(iframe);
+    }
+    
+    static async checkLegacyVideo(author, permlink) {
+        // Check if video exists in legacy system
+        try {
+            const response = await fetch(`/api/watch?v=${author}/${permlink}`);
+            return response.ok;
+        } catch {
+            return false;
+        }
+    }
+}
+
+// Usage in 3speak platform
+ThreeSpeakEmbed.embed('eddiespinod', 'xpztd24i', container, { vertical: true });</code>
+            </div>
+        </div>
+
         <!-- For Developers -->
         <div class="demo-section">
-            <h2>6. For Frontend Developers</h2>
+            <h2>8. 🛠️ For Frontend Developers</h2>
             <p>Simple JavaScript to auto-embed 3speak URLs:</p>
             
             <div class="code-block">
@@ -313,6 +543,16 @@ const embeddedContent = content.replace(videoRegex, (match, subdomain, route, vi
   return `&lt;iframe src="https://play.3speak.tv/${route}?v=${videoId}&mode=iframe" 
           width="854" height="480" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;`;
 });</code>
+            </div>
+
+            <div style="background: #1a3a5c; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #4a9eff;">
+                <strong style="color: #87ceeb;">💡 Best Practices:</strong><br>
+                • Use <code>&mode=iframe</code> for clean embeds<br>
+                • Choose container height based on content type<br>
+                • <strong>Standard videos:</strong> 300-480px height<br>
+                • <strong>Vertical videos:</strong> 500-600px height<br>
+                • Always include <code>allowfullscreen</code><br>
+                • The player handles aspect ratio - you control layout!
             </div>
         </div>
     </div>
