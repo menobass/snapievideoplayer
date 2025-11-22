@@ -45,21 +45,16 @@ h3 {
   font-size: 1.3em;
 }
 
-/* Video Player Styles - Dynamic aspect ratio based on video content */
+/* Video Player Styles - Fixed 16:9 aspect ratio (industry standard) */
 .player-wrapper {
   position: relative !important;
   width: 100% !important;
   margin-bottom: 30px;
   height: auto !important;
-  aspect-ratio: 16 / 9 !important; /* Default 16:9, will change dynamically */
+  aspect-ratio: 16 / 9 !important; /* Always 16:9 - frontend controls layout */
   display: block !important;
   overflow: hidden !important;
   flex-shrink: 0 !important;
-}
-
-/* Switch to vertical aspect ratio for vertical videos */
-.player-wrapper.vertical-video {
-  aspect-ratio: 9 / 16 !important; /* Vertical aspect ratio */
 }
 
 #snapie-player {
@@ -90,13 +85,7 @@ h3 {
   transform-origin: center !important; /* Fix rotation anchor point */
 }
 
-/* Special handling for vertical videos to prevent zoom/crop issues */
-.video-js.vertical-video .vjs-tech {
-  object-fit: contain !important;
-  width: 100% !important;
-  height: 100% !important;
-  background-color: black !important; /* Show black letterbox bars */
-}
+
 
 /* Player Logo Overlay */
 .player-logo {

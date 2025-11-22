@@ -72,10 +72,7 @@ function initializePlayer() {
     updatePlayerState('Ready');
   });
 
-  player.on('loadeddata', function() {
-    // Small timeout to ensure HLS variant is chosen and real dimensions available
-    setTimeout(handleVerticalVideoDetection, 50);
-  });
+
 
 
 
@@ -247,35 +244,7 @@ async function loadVideoFromData(videoData) {
 
 
 
-// Handle vertical video detection and proper scaling
-function handleVerticalVideoDetection() {
-  if (!player) return;
-  
-  // Use player.tech().el() to get the actual rendering video element (works with HLS/VHS)
-  const videoEl = player.tech().el();
-  if (!videoEl) return;
-  
-  const { videoWidth, videoHeight } = videoEl;
-  if (!videoWidth || !videoHeight) return;
-  
-  const isVertical = videoHeight > videoWidth;
-  
-  console.log(`Real dimensions: ${videoWidth}x${videoHeight} → vertical: ${isVertical}`);
-  
-  if (isVertical) {
-    console.log('Detected vertical video - adding vertical-video class');
-    player.addClass('vertical-video');
-    // Also tag the wrapper so it can change aspect ratio
-    const wrapper = player.el().closest('.player-wrapper');
-    if (wrapper) wrapper.classList.add('vertical-video');
-  } else {
-    console.log('Detected horizontal video - removing vertical-video class');
-    player.removeClass('vertical-video');
-    // Also remove from wrapper
-    const wrapper = player.el().closest('.player-wrapper');
-    if (wrapper) wrapper.classList.remove('vertical-video');
-  }
-}
+
 
 // Update UI helpers
 function updateCurrentSource(sourceName) {
