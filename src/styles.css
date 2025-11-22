@@ -45,83 +45,25 @@ h3 {
   font-size: 1.3em;
 }
 
-/* Video Player Styles - Fixed 16:9 aspect ratio (industry standard) */
+/* Video Player Styles - JW Player Approach: Simple and Elegant */
 .player-wrapper {
-  position: relative !important;
-  width: 100% !important;
+  width: 100%;
+  max-height: 100vh; /* Prevent vertical videos from overflowing viewport */
   margin-bottom: 30px;
-  height: auto !important;
-  aspect-ratio: 16 / 9 !important; /* Always 16:9 - frontend controls layout */
-  display: block !important;
-  overflow: hidden !important;
-  flex-shrink: 0 !important;
+  background: #000;
 }
 
-#snapie-player {
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
+/* Video.js fluid mode handles aspect ratios automatically */
+.video-js {
+  width: 100%;
+  height: 100%;
 }
 
-/* Lock video-js player to fill the dynamic wrapper */
-.player-wrapper .video-js {
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  min-height: 0 !important;
-  max-height: none !important;
-}
-
-/* Ensure video fits without stretching (letterboxing on sides) */
+/* Let the video element maintain its natural aspect ratio */
 .video-js .vjs-tech {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: contain !important;
-  transform: none !important; /* Prevent browser rotation issues */
-  transform-origin: center !important; /* Fix rotation anchor point */
-}
-
-/* FIXED: Proper vertical video handling - no forehead cropping */
-.video-js.vertical-video {
-  /* Remove forced aspect ratio for vertical videos */
-  aspect-ratio: unset !important;
-  /* Let the video control the height naturally */
-  height: auto !important;
-  min-height: 400px !important; /* Minimum usable height */
-  max-height: none !important; /* No height limit for vertical videos */
-}
-
-.video-js.vertical-video .vjs-tech {
-  /* Key fix: Center and size the video properly */
-  object-fit: contain !important;
-  object-position: center center !important; /* Force center positioning */
-  width: 100% !important; /* Use full width available */
-  height: 100% !important; /* Use full height available */
-  position: absolute !important; /* Position for centering */
-  left: 50% !important;
-  top: 50% !important;
-  transform: translate(-50%, -50%) !important; /* Center both horizontally and vertically */
-  background-color: #000 !important;
-}
-
-/* Also update the wrapper for vertical videos */
-.player-wrapper:has(.vertical-video),
-.player-wrapper.vertical-video {
-  aspect-ratio: unset !important; /* Remove 16:9 constraint */
-  height: auto !important;
-  min-height: 400px !important;
-  max-height: none !important; /* No height limit */
-}
-
-/* Fix the snapie-player element for vertical videos */
-.player-wrapper.vertical-video #snapie-player {
-  position: relative !important; /* Allow natural sizing */
-  height: auto !important;
-  min-height: 400px !important;
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Maintain aspect ratio, letterbox if needed */
 }
 
 

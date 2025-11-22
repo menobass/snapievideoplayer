@@ -21,7 +21,8 @@ function initializePlayer() {
     controls: true,
     autoplay: false,
     preload: 'auto',
-    fluid: true,
+    fluid: true,  // Let Video.js handle aspect ratios like JW Player
+    responsive: true,
     playbackRates: [0.5, 1, 1.5, 2],
     controlBar: {
       volumePanel: {
@@ -72,9 +73,9 @@ function initializePlayer() {
     updatePlayerState('Ready');
   });
 
-  player.on('loadeddata', function() {
-    // Small timeout to ensure HLS variant is chosen and real dimensions available
-    setTimeout(handleVerticalVideoDetection, 50);
+  player.on('loadedmetadata', function() {
+    // JW Player approach: Read dimensions and set aspect ratio dynamically
+    handleAspectRatio();
   });
 
 
@@ -251,33 +252,33 @@ async function loadVideoFromData(videoData) {
 
 
 
-// Handle vertical video detection for proper scaling (no container resizing)
-function handleVerticalVideoDetection() {
+// JW Player approach: Read video dimensions and set aspect ratio dynamically
+function handleAspectRatio() {
   if (!player) return;
   
-  // Use player.tech().el() to get the actual rendering video element (works with HLS/VHS)
-  const videoEl = player.tech().el();
-  if (!videoEl) return;
+  const videoWidth = player.videoWidth();
+  const videoHeight = player.videoHeight();
   
-  const { videoWidth, videoHeight } = videoEl;
-  if (!videoWidth || !videoHeight) return;
+  if (!videoWidth || !videoHeight) {
+    console.log('Video dimensions not yet available');
+    return;
+  }
   
   const isVertical = videoHeight > videoWidth;
   
-  console.log(`Real dimensions: ${videoWidth}x${videoHeight} → vertical: ${isVertical}`);
+  console.log(`Video dimensions: ${videoWidth}x${videoHeight} → ${isVertical ? 'vertical' : 'horizontal'}`);
   
+  // Dynamically set aspect ratio like JW Player does
+  const aspectRatio = `${videoWidth}:${videoHeight}`;
+  player.aspectRatio(aspectRatio);
+  
+  // Add class for any additional styling needs
   if (isVertical) {
-    console.log('Detected vertical video - adding vertical-video class for better scaling');
     player.addClass('vertical-video');
-    // Also add to wrapper to trigger CSS aspect-ratio changes
-    const wrapper = player.el().closest('.player-wrapper');
-    if (wrapper) wrapper.classList.add('vertical-video');
+    console.log(`Set aspect ratio to ${aspectRatio} for vertical video`);
   } else {
-    console.log('Detected horizontal video - removing vertical-video class');
     player.removeClass('vertical-video');
-    // Also remove from wrapper
-    const wrapper = player.el().closest('.player-wrapper');
-    if (wrapper) wrapper.classList.remove('vertical-video');
+    console.log(`Set aspect ratio to ${aspectRatio} for horizontal video`);
   }
 }
 
