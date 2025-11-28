@@ -272,10 +272,37 @@ body.layout-square .vjs-tech {
 }
 
 /* Desktop / default → normal Video.js behavior */
+/* Desktop layout - YouTube-style 16:9 with letterboxing */
 body.layout-desktop .player-wrapper {
+  position: relative;
   width: 100%;
-  max-height: 100vh;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  height: 0;
   background: #000;
+  overflow: hidden;
+  max-height: 100vh;
+}
+
+body.layout-desktop .video-js {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+body.layout-desktop .vjs-tech {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: auto !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
 }
 
 /* Replay Button Overlay */

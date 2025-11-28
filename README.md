@@ -299,74 +299,148 @@ All configuration is in `.env`:
 
 This player uses **JW Player's proven approach** for handling all video orientations:
 
-- Player reads video dimensions from HLS manifest automatically
-- Dynamically sets aspect ratio using `player.aspectRatio(width:height)`
-- Simple CSS with Video.js `fluid: true` mode - no complex positioning hacks
-- Works perfectly for horizontal (16:9), vertical (9:16), and square (1:1) videos
+- **Automatic detection** - Player reads video dimensions from HLS manifest
+- **Proper aspect ratios** - Dynamically sets aspect ratio using Video.js API
+- **Simple CSS** - No complex positioning hacks, just pure Video.js
+- **Perfect display** - Works equally well for horizontal (16:9), vertical (9:16), and square (1:1)
 
-**For Frontend Developers:**
-- Store video dimensions in your database during upload
-- Detect orientation: `isVertical = height > width`
-- Use proper iframe heights: **800px for vertical, 400px for horizontal**
-- See [embed-demo.html](https://play.3speak.tv/embed-demo.html) for complete examples
+### For Web Developers (PostMessage API)
 
-**Technical Details:**
-- See [docs/JW_PLAYER_REFERENCE.md](docs/JW_PLAYER_REFERENCE.md) for JW Player implementation analysis
-- Player uses just ~20 lines of CSS (vs 80+ lines of complexity before refactor)
-- No forced aspect ratios, no absolute positioning, no transform hacks
-- Trust the video metadata and let Video.js do the work!
+Web apps can detect video orientation dynamically using the PostMessage API - no database queries needed!
+
+```javascript
+// Add this listener ONE TIME to your app (works for ALL videos)
+window.addEventListener('message', (event) => {
+    if (event.data.type === '3speak-player-ready') {
+        const { isVertical, width, height, aspectRatio } = event.data;
+        const iframe = event.source.frameElement;
+        
+        // Adjust iframe size based on video orientation
+        if (isVertical) {
+            iframe.style.height = '800px';
+            iframe.style.maxWidth = '450px';
+        } else {
+            iframe.style.height = '450px';
+            iframe.style.maxWidth = '800px';
+        }
+    }
+});
+
+// Then embed videos normally - player auto-detects everything!
+function embed(author, permlink) {
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://play.3speak.tv/embed?v=${author}/${permlink}&mode=iframe`;
+    iframe.width = '100%';
+    iframe.height = '600'; // Default, will auto-adjust
+    document.body.appendChild(iframe);
+}
+```
+
+### Technical Details
+
+- **No forced aspect ratios** - The player lets Video.js calculate naturally
+- **No transform hacks** - Simple absolute positioning with translate-based centering
+- **HLS metadata reading** - Extracts video dimensions from manifest
+- **Performance** - Optimized like JW Player with aggressive buffering and quality upgrade strategies
+- **See** [docs/JW_PLAYER_REFERENCE.md](docs/JW_PLAYER_REFERENCE.md) for full implementation analysis
+
+## Layout Modes
+
+The player supports three layout modes to handle different embedding scenarios:
+
+| Mode | Aspect Ratio | Best For | Key Feature |
+|------|--------------|----------|-------------|
+| `layout=desktop` | 16:9 | Web embeds, blog posts | **YouTube-style** - strict 16:9 with letterboxing (default) |
+| `layout=mobile` | 3:4 | Mobile apps, social feeds | **Tall container** - works for all video orientations, no scrollbars |
+| `layout=square` | 1:1 | Grid layouts, thumbnails | **Universal** - maximum compatibility, perfect square |
+
+**Default (No Parameter):** Uses `layout=desktop` - YouTube-style 16:9 letterboxing with automatic video centering.
+
+### Desktop Layout (YouTube-Style, Default)
+
+```
+https://play.3speak.tv/embed?v=author/permlink&mode=iframe&layout=desktop
+```
+
+All videos maintain a strict **16:9 aspect ratio**:
+- Horizontal videos fill the container naturally
+- Vertical videos get black bars on the sides (letterboxed)
+- Square videos get black bars above and below
+- Perfect for web embeds and blog posts
+
+### Mobile Layout (Recommended for Apps)
+
+```
+https://play.3speak.tv/embed?v=author/permlink&mode=iframe&layout=mobile
+```
+
+Creates a **tall 3:4 container** that works perfectly for any video orientation:
+- **No scrollbars** - ever
+- **No orientation detection** needed - works for vertical AND horizontal
+- **Recommended for iOS, Android, React Native, Flutter**
+- See complete examples below
+
+### Square Layout (Maximum Compatibility)
+
+```
+https://play.3speak.tv/embed?v=author/permlink&mode=iframe&layout=square
+```
+
+Universal 1:1 square container for grid layouts, thumbnails, and ultra-simple embeds.
 
 ## Mobile App Integration
 
-### Layout Parameter for Universal Compatibility
+## Mobile App Integration
 
-**Problem:** Mobile apps (iOS, Android, React Native, Flutter) can't always dynamically resize iframes based on video orientation.
+### Using the `layout=mobile` Parameter
 
-**Solution:** Use the `layout=mobile` parameter to create a universal container that works perfectly for ALL video orientations!
+The `layout=mobile` parameter provides a **universal container** that works for ALL video orientations without requiring orientation detection or database queries:
 
+```bash
+# Same URL works for vertical AND horizontal videos - no scrollbars!
+https://play.3speak.tv/embed?v=author/permlink&mode=iframe&layout=mobile
+```
+
+**iOS Swift:**
 ```swift
-// iOS Swift Example
 let videoUrl = "https://play.3speak.tv/embed?v=\(author)/\(permlink)&mode=iframe&layout=mobile"
 webView.load(URLRequest(url: URL(string: videoUrl)!))
+webView.scrollView.isScrollEnabled = false  // Disable scrollbars
 ```
 
+**Android Kotlin:**
 ```kotlin
-// Android Kotlin Example
 val videoUrl = "https://play.3speak.tv/embed?v=$author/$permlink&mode=iframe&layout=mobile"
 webView.loadUrl(videoUrl)
+// WebView with match_parent dimensions in layout XML
 ```
 
+**React Native:**
 ```javascript
-// React Native Example
 const videoUrl = `https://play.3speak.tv/embed?v=${author}/${permlink}&mode=iframe&layout=mobile`;
-<WebView source={{ uri: videoUrl }} style={{ aspectRatio: 3/4 }} />
+<WebView 
+  source={{ uri: videoUrl }} 
+  style={{ aspectRatio: 3/4 }}  // 3:4 ratio matches mobile layout
+  scrollEnabled={false}
+/>
+```
+
+**Flutter:**
+```dart
+final videoUrl = 'https://play.3speak.tv/embed?v=$author/$permlink&mode=iframe&layout=mobile';
+AspectRatio(
+  aspectRatio: 3/4,
+  child: WebViewWidget(controller: controller),
+)
 ```
 
 **Benefits:**
-- ✅ One container for all videos - No orientation detection needed
-- ✅ No scrollbars ever - Perfect letterboxing for all orientations
-- ✅ Copy-paste integration - Same code for every video
-- ✅ Works immediately - No database changes required
-- ✅ Mobile-optimized - 3:4 aspect ratio ideal for phone screens
+- ✅ One container for all videos - no orientation detection needed
+- ✅ No scrollbars ever - automatic letterboxing
+- ✅ Works immediately - no database changes required
+- ✅ Mobile-optimized - 3:4 ideal for phone screens
 
-**See [EMBEDDING.md](EMBEDDING.md) for complete mobile integration examples with iOS, Android, React Native, and Flutter.**
-
-### PostMessage API (For Web Apps)
-
-Web apps that can dynamically resize iframes should use the PostMessage API:
-
-```javascript
-window.addEventListener('message', (event) => {
-    if (event.data.type === '3speak-player-ready') {
-        const { isVertical, width, height } = event.data;
-        // Adjust iframe size dynamically based on video dimensions
-        const iframe = event.source.frameElement;
-        iframe.style.height = isVertical ? '800px' : '450px';
-    }
-});
-```
-
-The player automatically sends video dimensions when loaded - no API calls or database queries needed!
+**For more detailed integration examples, see [EMBEDDING.md](EMBEDDING.md).**
 
 ## Development Notes
 

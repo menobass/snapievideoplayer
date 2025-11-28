@@ -68,19 +68,38 @@ https://play.3speak.tv/embed?v=owner/permlink
 
 **Solution:** Use the `layout` parameter to create universal containers that work perfectly for ALL video orientations without requiring dynamic resizing!
 
+#### Quick Reference
+
+| Layout | Aspect Ratio | Best For | URL Example |
+|--------|--------------|----------|-------------|
+| **`layout=desktop`** | 16:9 (YouTube-style) | Web embeds, blog posts | `https://play.3speak.tv/embed?v=author/permlink&mode=iframe&layout=desktop` |
+| **`layout=mobile`** | 3:4 (tall) | iOS, Android, React Native, Flutter | `https://play.3speak.tv/embed?v=author/permlink&mode=iframe&layout=mobile` |
+| **`layout=square`** | 1:1 (square) | Grid layouts, thumbnails | `https://play.3speak.tv/embed?v=author/permlink&mode=iframe&layout=square` |
+
 #### Available Layout Modes
 
-1. **`layout=mobile`** - Tall 3:4 container (RECOMMENDED FOR MOBILE APPS)
+1. **`layout=desktop`** - YouTube-Style 16:9 Container (DEFAULT)
+   ```
+   https://play.3speak.tv/embed?v=author/permlink&mode=iframe&layout=desktop
+   ```
+   - Maintains strict **16:9 aspect ratio** (YouTube-style)
+   - Horizontal videos fill container naturally
+   - Vertical videos get black letterboxing on sides
+   - **Best for:** Web embeds, blog posts, responsive designs
+   - Supports PostMessage API for dynamic sizing
+
+2. **`layout=mobile`** - Tall 3:4 Container (RECOMMENDED FOR APPS)
    ```
    https://play.3speak.tv/embed?v=author/permlink&mode=iframe&layout=mobile
    ```
-   - Creates a 3:4 aspect ratio container (taller than wide)
+   - Creates a **3:4 aspect ratio container** (taller than wide)
    - Perfect for mobile phone screens
    - Works beautifully for vertical videos (fills container)
    - Works perfectly for horizontal videos (letterboxed, no scrollbars)
-   - Use this if your app can't dynamically adjust iframe sizes
+   - **Best for:** Mobile apps that can't dynamically resize
+   - **RECOMMENDED:** This is the easiest solution for all mobile platforms
 
-2. **`layout=square`** - Square 1:1 container (MAXIMUM COMPATIBILITY)
+3. **`layout=square`** - Square 1:1 Container (MAXIMUM COMPATIBILITY)
    ```
    https://play.3speak.tv/embed?v=author/permlink&mode=iframe&layout=square
    ```
@@ -89,24 +108,16 @@ https://play.3speak.tv/embed?v=owner/permlink
    - Ideal for social media grids, thumbnails, ultra-simple layouts
    - Always letterboxes content to fit
 
-3. **`layout=desktop`** - Flexible responsive (DEFAULT BEHAVIOR)
-   ```
-   https://play.3speak.tv/embed?v=author/permlink&mode=iframe&layout=desktop
-   ```
-   - Uses fluid responsive container
-   - Adapts to video aspect ratio automatically
-   - Best for web apps that can listen to PostMessage API
-   - Same as not specifying layout parameter
-
 #### When to Use Layout Modes
 
 | Use Case | Recommended Layout | Why? |
 |----------|-------------------|------|
-| **iOS/Android Native Apps** | `layout=mobile` | Can't resize iframes dynamically |
-| **React Native/Flutter** | `layout=mobile` | Simplest universal container |
-| **Social Media Grids** | `layout=square` | Consistent size for all videos |
-| **Web Apps with PostMessage** | `layout=desktop` or no parameter | Can adapt dynamically |
-| **Simple Embeds (Unknown Orientation)** | `layout=mobile` | Works for everything |
+| **iOS/Android Native Apps** | `layout=mobile` | Can't resize iframes dynamically, 3:4 is perfect for phones |
+| **React Native/Flutter** | `layout=mobile` | Simplest universal container, no orientation detection needed |
+| **Web Blog Posts** | `layout=desktop` | YouTube-style 16:9, professional appearance |
+| **Social Media Grids** | `layout=square` | Consistent size for all videos in grid layout |
+| **Dashboard/Widget** | `layout=mobile` or `layout=square` | Fixed-size container that works for any video |
+| **Unknown Orientation** | `layout=mobile` | Works perfectly for everything, most universal |
 
 #### Mobile App Integration Examples
 

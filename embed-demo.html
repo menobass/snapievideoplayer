@@ -298,460 +298,230 @@
             </div>
         </div>
 
-        <!-- Vertical Videos -->
+        <!-- Layout Modes Guide -->
         <div class="demo-section">
-            <h2>6. 📱 Handling Vertical Videos - The JW Player Way</h2>
-            <p><strong>Philosophy:</strong> The 3speak player now uses <strong>JW Player's proven approach</strong> - it automatically reads video dimensions from HLS metadata and adapts perfectly! 
-            <strong>The player handles everything</strong> - you just provide the right container size.</p>
+            <h2>6. 📐 Layout Modes - Choosing the Right Container</h2>
+            <p>The 3speak player supports three layout modes to handle different embedding scenarios. Choose the one that fits your use case:</p>
 
-            <div style="background: #2d5a27; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #4caf50;">
-                <strong style="color: #a5d6a7;">✅ SUCCESS: JW Player-Inspired Refactor Complete!</strong><br>
-                We analyzed JW Player's implementation and adopted their elegant approach:<br>
-                • Player reads video dimensions automatically from HLS manifest<br>
-                • Dynamically sets aspect ratio using <code>player.aspectRatio()</code><br>
-                • Simple CSS with <code>fluid: true</code> mode - no complex hacks<br>
-                • Result: <strong>Perfect display for all video orientations!</strong>
+            <h3>Quick Comparison Table</h3>
+            <div style="background: #1a1a1a; border-radius: 8px; padding: 20px; margin: 20px 0; overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; color: #ccc;">
+                    <tr style="border-bottom: 1px solid #444;">
+                        <th style="padding: 12px; text-align: left; color: #4a9eff;">Mode</th>
+                        <th style="padding: 12px; text-align: left; color: #4a9eff;">Aspect Ratio</th>
+                        <th style="padding: 12px; text-align: left; color: #4a9eff;">Best For</th>
+                        <th style="padding: 12px; text-align: left; color: #4a9eff;">Key Feature</th>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #333;">
+                        <td style="padding: 12px; background: #252525;"><code style="color: #4af;">layout=mobile</code></td>
+                        <td style="padding: 12px; background: #252525;">3:4 (tall)</td>
+                        <td style="padding: 12px; background: #252525;">Mobile apps, social feeds</td>
+                        <td style="padding: 12px; background: #252525;">Universal container for all videos</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #333;">
+                        <td style="padding: 12px;"><code style="color: #4af;">layout=square</code></td>
+                        <td style="padding: 12px;">1:1 (square)</td>
+                        <td style="padding: 12px;">Grid layouts, thumbnails</td>
+                        <td style="padding: 12px;">Maximum compatibility</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; background: #252525;"><code style="color: #4af;">layout=desktop</code></td>
+                        <td style="padding: 12px; background: #252525;">16:9 (YouTube-style)</td>
+                        <td style="padding: 12px; background: #252525;">Web embeds, blog posts</td>
+                        <td style="padding: 12px; background: #252525;">Professional letterboxing</td>
+                    </tr>
+                </table>
             </div>
 
-            <div style="background: #d4471c; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #ff6b35;">
-                <strong style="color: #fff;">⚠️ FRONTEND RESPONSIBILITY:</strong><br>
-                <strong style="color: #ffeb3b;">You must provide taller iframes for vertical videos</strong> or users will see scrollbars!<br>
-                The player works perfectly - but <strong>your iframe height determines the viewport</strong>.<br>
-                Solution: Detect orientation from database and use <code>height="700"</code> for vertical, <code>height="400"</code> for horizontal.
-            </div>
+            <h3 style="margin-top: 30px;">1. Desktop Layout - YouTube-Style (Default)</h3>
+            <p>The <code>&layout=desktop</code> mode maintains a strict 16:9 aspect ratio like YouTube. All videos (vertical, horizontal, or square) display with perfect letterboxing. <strong>This is perfect for web embeds.</strong></p>
             
-            <div style="background: #333; border-radius: 8px; padding: 20px; margin: 20px 0;">
-                <strong style="color: #4a9eff;">Demo Video:</strong> <code>vempromundo/hkh2vzzf</code> (Vertical content)
-            </div>
-
             <div class="comparison">
                 <div class="comparison-item">
-                    <h3>❌ Wrong: Short Iframe (Shows Scrollbar)</h3>
+                    <h3>Vertical Video (with letterboxing)</h3>
                     <div class="video-wrapper">
                         <iframe 
-                            src="https://play.3speak.tv/embed?v=vempromundo/hkh2vzzf&mode=iframe" 
+                            src="https://play.3speak.tv/embed?v=vempromundo/hkh2vzzf&mode=iframe&layout=desktop" 
                             width="100%" 
-                            height="400"
+                            height="450"
                             frameborder="0"
                             allowfullscreen>
                         </iframe>
                     </div>
                     <div class="code-block">
-                        <code>/* Too short for vertical video - creates scrollbar */
-height="400" /* ❌ Bad for vertical */</code>
+                        <code>&layout=desktop
+/* All vertical videos get black bars on sides */</code>
                     </div>
                 </div>
                 
                 <div class="comparison-item">
-                    <h3>✅ Correct: Tall Iframe (No Scrollbar!)</h3>
-                    <div class="video-wrapper" style="max-width: 450px; margin: 0 auto;">
+                    <h3>Horizontal Video (no letterboxing needed)</h3>
+                    <div class="video-wrapper">
                         <iframe 
-                            src="https://play.3speak.tv/embed?v=vempromundo/hkh2vzzf&mode=iframe" 
+                            src="https://play.3speak.tv/embed?v=meno/1czchhmr&mode=iframe&layout=desktop" 
                             width="100%" 
-                            height="800"
+                            height="450"
                             frameborder="0"
                             allowfullscreen>
                         </iframe>
                     </div>
                     <div class="code-block">
-                        <code>/* Proper height for vertical video - perfect! */
-height="800" /* ✅ Good for vertical */
-max-width: 450px /* Optimal width */</code>
+                        <code>&layout=desktop
+/* Horizontal videos fill the container naturally */</code>
                     </div>
                 </div>
             </div>
 
-            <h3 style="margin-top: 30px;">CSS Container Strategies - JW Player Style</h3>
-            <div class="code-block">
-                <code>/* Standard container for horizontal videos */
-.video-container.horizontal {
-    max-width: 800px;
-    margin: 20px auto;
-}
-
-/* Narrower container for vertical videos - optimal UX */
-.video-container.vertical {
-    max-width: 450px; /* Sweet spot for vertical content */
-    margin: 20px auto;
-}
-
-/* Mobile responsive - adjust for smaller screens */
-@media (max-width: 768px) {
-    .video-container.horizontal,
-    .video-container.vertical {
-        max-width: 100%; /* Full width on mobile */
-    }
-}
-
-/* TikTok/Instagram Reels style - ultra-narrow */
-.video-container.shorts {
-    max-width: 380px;
-    margin: 0 auto;
-    background: #000;
-    border-radius: 12px;
-    overflow: hidden;
-}</code>
+            <h3 style="margin-top: 30px;">2. Mobile Layout - Tall Container (3:4)</h3>
+            <p><strong>Recommended for mobile apps!</strong> The <code>&layout=mobile</code> parameter creates a tall 3:4 container that works beautifully for both vertical AND horizontal videos without any scrollbars.</p>
+            
+            <div class="comparison">
+                <div class="comparison-item">
+                    <h3>Vertical Video</h3>
+                    <div class="video-wrapper" style="max-width: 350px; margin: 0 auto;">
+                        <iframe 
+                            src="https://play.3speak.tv/embed?v=vempromundo/hkh2vzzf&mode=iframe&layout=mobile" 
+                            width="100%" 
+                            height="600"
+                            frameborder="0"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                    <div class="code-block">
+                        <code>/* Perfect fit for vertical videos */
+&layout=mobile
+height="600"</code>
+                    </div>
+                </div>
+                
+                <div class="comparison-item">
+                    <h3>Horizontal Video</h3>
+                    <div class="video-wrapper" style="max-width: 350px; margin: 0 auto;">
+                        <iframe 
+                            src="https://play.3speak.tv/embed?v=meno/mtbb87lv&mode=iframe&layout=mobile" 
+                            width="100%" 
+                            height="600"
+                            frameborder="0"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                    <div class="code-block">
+                        <code>/* Horizontal gets black bars above/below */
+&layout=mobile
+height="600"</code>
+                    </div>
+                </div>
             </div>
 
-            <h3 style="margin-top: 30px;">🚀 NEW: Automatic Detection (No Database Needed!)</h3>
-            <div style="background: #2d5a27; border-radius: 8px; padding: 15px; margin: 15px 0; border-left: 4px solid #4caf50;">
-                <strong style="color: #a5d6a7;">✨ The player automatically tells your frontend the video orientation!</strong><br>
-                Just listen for the <code>3speak-player-ready</code> message - no API calls, no database queries required.
+            <h3 style="margin-top: 30px;">3. Square Layout - 1:1 Container</h3>
+            <p>For maximum universal compatibility, use <code>&layout=square</code> for a 1:1 square container. Works for any video orientation.</p>
+            
+            <div class="video-wrapper" style="max-width: 400px; margin: 20px auto;">
+                <iframe 
+                    src="https://play.3speak.tv/embed?v=vempromundo/hkh2vzzf&mode=iframe&layout=square" 
+                    width="100%" 
+                    height="400"
+                    frameborder="0"
+                    allowfullscreen>
+                </iframe>
             </div>
             
             <div class="code-block">
-                <code>// STEP 1: Add this ONE TIME to your app (listens for ALL videos)
+                <code>&lt;iframe 
+  src="https://play.3speak.tv/embed?v=author/permlink&mode=iframe&layout=square" 
+  width="350" 
+  height="350"
+  frameborder="0"
+  allowfullscreen&gt;
+&lt;/iframe&gt;</code>
+            </div>
+
+            <h3 style="margin-top: 30px;">✨ Automatic Orientation Detection (Web Apps)</h3>
+            <p>For web applications, you don't need to manually detect video orientation. Just listen for the player's ready message and let it tell you!</p>
+            
+            <div class="code-block">
+                <code>// ONE TIME setup - works for ALL videos on your page
 window.addEventListener('message', function(event) {
-    // Check if message is from 3speak player
     if (event.data.type === '3speak-player-ready') {
-        console.log('Video loaded:', event.data);
-        // event.data contains:
-        // {
-        //   type: '3speak-player-ready',
-        //   isVertical: true/false,
-        //   width: 1080,
-        //   height: 1920,
-        //   aspectRatio: 0.5625,
-        //   orientation: 'vertical' // or 'horizontal' or 'square'
-        // }
-        
-        // Find the iframe that sent this message
         const iframe = event.source.frameElement;
         
+        // Player tells you video dimensions and orientation!
+        console.log('Video info:', {
+            isVertical: event.data.isVertical,  // true/false
+            width: event.data.width,             // e.g., 720
+            height: event.data.height,           // e.g., 1280
+            aspectRatio: event.data.aspectRatio  // e.g., 0.5625
+        });
+        
+        // Adjust your iframe or container based on orientation
         if (event.data.isVertical) {
-            // Vertical video - adjust size
-            iframe.style.height = '800px';
-            iframe.style.maxWidth = '450px';
-            iframe.parentElement.classList.add('vertical-video');
+            iframe.height = '800px';
+            iframe.maxWidth = '450px';
         } else {
-            // Horizontal video - standard size
-            iframe.style.height = '450px';
-            iframe.style.maxWidth = '800px';
-            iframe.parentElement.classList.add('horizontal-video');
+            iframe.height = '450px';
+            iframe.maxWidth = '800px';
         }
     }
 });
 
-// STEP 2: Embed videos normally (no special code needed per video!)
-function embedVideo(author, permlink, containerId) {
-    const container = document.getElementById(containerId);
+// Embed videos normally - no special code per video!
+function embedVideo(author, permlink) {
     const iframe = document.createElement('iframe');
-    
     iframe.src = `https://play.3speak.tv/embed?v=${author}/${permlink}&mode=iframe`;
     iframe.width = '100%';
-    iframe.height = '600'; // Default height, will auto-adjust
+    iframe.height = '600'; // Default, will auto-adjust
     iframe.frameBorder = '0';
     iframe.allowFullscreen = true;
-    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-    
-    container.appendChild(iframe);
-}
-
-// That's it! The message listener handles everything automatically.</code>
+    document.body.appendChild(iframe);
+}</code>
             </div>
 
-            <h3 style="margin-top: 30px;">React/Next.js Component (Auto-Adjusting!)</h3>
+            <h3 style="margin-top: 30px;">React/Next.js Component</h3>
             <div class="code-block">
                 <code>import { useEffect, useRef, useState } from 'react';
 
-const ThreeSpeakPlayer = ({ author, permlink, className = '' }) => {
+const ThreeSpeakPlayer = ({ author, permlink }) => {
     const iframeRef = useRef(null);
     const [isVertical, setIsVertical] = useState(false);
     
     useEffect(() => {
-        // Listen for player ready message
         const handleMessage = (event) => {
-            if (event.data.type === '3speak-player-ready') {
-                // Check if this message is from our iframe
-                if (event.source === iframeRef.current?.contentWindow) {
-                    setIsVertical(event.data.isVertical);
-                    console.log(`Video ${author}/${permlink} is ${event.data.orientation}`);
-                }
+            if (event.data.type === '3speak-player-ready' && 
+                event.source === iframeRef.current?.contentWindow) {
+                setIsVertical(event.data.isVertical);
             }
         };
         
         window.addEventListener('message', handleMessage);
         return () => window.removeEventListener('message', handleMessage);
-    }, [author, permlink]);
+    }, []);
     
-    // Dynamic styling based on orientation
-    const containerClass = `video-container ${isVertical ? 'vertical' : 'horizontal'} ${className}`;
-    const iframeHeight = isVertical ? '800px' : '450px';
+    const height = isVertical ? '800px' : '450px';
     const maxWidth = isVertical ? '450px' : '800px';
     
     return (
-        &lt;div className={containerClass} style={{ maxWidth, margin: '0 auto' }}&gt;
+        &lt;div style={{ maxWidth, margin: '0 auto' }}&gt;
             &lt;iframe
                 ref={iframeRef}
                 src={`https://play.3speak.tv/embed?v=${author}/${permlink}&mode=iframe`}
                 width="100%"
-                height={iframeHeight}
+                height={height}
                 style={{ border: 'none', borderRadius: '8px' }}
                 allowFullScreen
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             /&gt;
         &lt;/div&gt;
     );
 };
 
-// Usage - No need to specify orientation!
-&lt;ThreeSpeakPlayer author="vempromundo" permlink="hkh2vzzf" /&gt;
-&lt;ThreeSpeakPlayer author="eddiespinod" permlink="xpztd24i" /&gt;</code>
+// Usage
+&lt;ThreeSpeakPlayer author="vempromundo" permlink="hkh2vzzf" /&gt;</code>
             </div>
         </div>
 
-        <!-- 3speak Platform Integration -->
+        <!-- Mobile App Integration -->
         <div class="demo-section">
-            <h2>7. 🌐 For 3speak Platform Integration</h2>
-            <p>Special guidance for integrating videos within the 3speak ecosystem using the <code>/watch</code> format:</p>
-            
-            <div style="background: #333; border-radius: 8px; padding: 20px; margin: 20px 0;">
-                <strong style="color: #4a9eff;">Demo Video:</strong> <code>eddiespinod/xpztd24i</code> (Eddie's vertical test)
-            </div>
-
-            <h3>3speak Feed Integration</h3>
-            <div class="video-wrapper" style="max-width: 400px; margin: 20px auto;">
-                <iframe 
-                    src="https://play.3speak.tv/watch?v=eddiespinod/xpztd24i&mode=iframe" 
-                    width="100%" 
-                    height="600"
-                    frameborder="0"
-                    allowfullscreen>
-                </iframe>
-            </div>
-
-            <div class="code-block">
-                <code>// 3speak platform: Use /watch format for legacy videos
-&lt;iframe 
-    src="https://play.3speak.tv/watch?v=eddiespinod/xpztd24i&mode=iframe"
-    width="100%" 
-    height="600"
-    frameborder="0" 
-    allowfullscreen&gt;
-&lt;/iframe&gt;
-
-// For direct uploads: Use /embed format  
-&lt;iframe 
-    src="https://play.3speak.tv/embed?v=vempromundo/hkh2vzzf&mode=iframe"
-    width="100%" 
-    height="600"
-    frameborder="0"
-    allowfullscreen&gt;
-&lt;/iframe&gt;</code>
-            </div>
-
-            <h3>Platform-Specific CSS</h3>
-            <div class="code-block">
-                <code>/* 3speak mobile feed style */
-.threespeak-feed {
-    display: flex;
-    flex-direction: column;
-    max-width: 500px;
-    margin: 0 auto;
-}
-
-.threespeak-post {
-    background: #2a2a2a;
-    border-radius: 12px;
-    padding: 15px;
-    margin-bottom: 20px;
-}
-
-.threespeak-video {
-    width: 100%;
-    height: 350px; /* Balanced for mixed content */
-    border-radius: 8px;
-}
-
-/* For vertical video emphasis */
-.threespeak-post.vertical .threespeak-video {
-    height: 500px;
-    max-width: 350px;
-    margin: 0 auto;
-}</code>
-            </div>
-
-            <h3>🔥 COMPLETE 3speak Integration Solution</h3>
-            <div class="code-block">
-                <code>// STEP 1: Detect vertical videos from your video metadata
-class ThreeSpeakEmbed {
-    static async embed(author, permlink, container, options = {}) {
-        const videoId = `${author}/${permlink}`;
-        
-        // Get video metadata to detect orientation
-        const metadata = await this.getVideoMetadata(author, permlink);
-        const isVertical = metadata.height > metadata.width;
-        
-        // Determine URL format based on video type
-        const isLegacy = await this.checkLegacyVideo(author, permlink);
-        const baseUrl = isLegacy ? '/watch' : '/embed';
-        
-        const iframe = document.createElement('iframe');
-        iframe.src = `https://play.3speak.tv${baseUrl}?v=${videoId}&mode=iframe`;
-        iframe.width = '100%';
-        
-        // 🎯 KEY: Adjust height based on orientation
-        if (isVertical) {
-            iframe.height = '600'; // Taller for vertical videos
-            container.className += ' vertical-video-container';
-        } else {
-            iframe.height = '350'; // Standard for horizontal
-            container.className += ' horizontal-video-container';
-        }
-        
-        iframe.frameBorder = '0';
-        iframe.allowFullscreen = true;
-        
-        container.appendChild(iframe);
-        return { isVertical, metadata };
-    }
-    
-    // STEP 2: Get video dimensions from your database
-    static async getVideoMetadata(author, permlink) {
-        try {
-            // Replace with your actual API endpoint
-            const response = await fetch(`/api/video-metadata/${author}/${permlink}`);
-            const data = await response.json();
-            return {
-                width: data.width || 1920,
-                height: data.height || 1080,
-                duration: data.duration,
-                title: data.title
-            };
-        } catch (error) {
-            console.warn('Could not fetch metadata, assuming horizontal');
-            return { width: 1920, height: 1080 }; // Default to horizontal
-        }
-    }
-    
-    static async checkLegacyVideo(author, permlink) {
-        try {
-            const response = await fetch(`/api/watch?v=${author}/${permlink}`);
-            return response.ok;
-        } catch {
-            return false;
-        }
-    }
-}
-
-// STEP 3: Usage in your feed/post components
-async function renderVideoPost(post) {
-    const container = document.getElementById(`video-${post.id}`);
-    const result = await ThreeSpeakEmbed.embed(
-        post.author, 
-        post.permlink, 
-        container
-    );
-    
-    // Optional: Add visual indicators
-    if (result.isVertical) {
-        console.log('📱 Rendered vertical video with optimized container');
-    }
-}</code>
-            </div>
-
-            <h3>🛠️ For React/Next.js 3speak Apps</h3>
-            <div class="code-block">
-                <code>// Hook to detect video orientation
-const useVideoOrientation = (author, permlink) => {
-    const [isVertical, setIsVertical] = useState(false);
-    const [loading, setLoading] = useState(true);
-    
-    useEffect(() => {
-        async function detectOrientation() {
-            try {
-                const metadata = await fetch(`/api/video-metadata/${author}/${permlink}`);
-                const data = await metadata.json();
-                setIsVertical(data.height > data.width);
-            } catch (error) {
-                console.warn('Orientation detection failed, defaulting to horizontal');
-                setIsVertical(false);
-            } finally {
-                setLoading(false);
-            }
-        }
-        
-        detectOrientation();
-    }, [author, permlink]);
-    
-    return { isVertical, loading };
-};
-
-// Smart video component
-const ThreeSpeakVideo = ({ author, permlink, className = '' }) => {
-    const { isVertical, loading } = useVideoOrientation(author, permlink);
-    
-    if (loading) {
-        return &lt;div className="video-skeleton"&gt;Loading...&lt;/div&gt;;
-    }
-    
-    const height = isVertical ? '600' : '350';
-    const containerClass = `video-container ${isVertical ? 'vertical' : 'horizontal'} ${className}`;
-    
-    return (
-        &lt;div className={containerClass}&gt;
-            &lt;iframe
-                src={`https://play.3speak.tv/embed?v=${author}/${permlink}&mode=iframe`}
-                width="100%"
-                height={height}
-                frameBorder="0"
-                allowFullScreen
-                title={`Video by ${author}`}
-            /&gt;
-            {isVertical && (
-                &lt;span className="video-badge vertical"&gt;📱 Vertical&lt;/span&gt;
-            )}
-        &lt;/div&gt;
-    );
-};
-
-// Usage in feed
-&lt;ThreeSpeakVideo author="vempromundo" permlink="hkh2vzzf" /&gt;</code>
-            </div>
-
-            <h3>📊 Database Schema for Orientation Detection</h3>
-            <div class="code-block">
-                <code>// Add these fields to your video metadata collection
-{
-  author: "vempromundo",
-  permlink: "hkh2vzzf", 
-  title: "My vertical video",
-  // 🎯 CRITICAL: Store video dimensions
-  video_metadata: {
-    width: 720,   // Video width in pixels
-    height: 1280, // Video height in pixels
-    duration: 45, // Duration in seconds
-    format: "mp4",
-    orientation: "portrait" // Computed: "portrait" | "landscape" | "square"
-  },
-  // Compute orientation when saving video
-  is_vertical: true, // height > width
-  aspect_ratio: 0.5625, // width / height
-  created_at: "2024-11-22T13:25:00Z"
-}
-
-// MongoDB query to find vertical videos
-db.videos.find({ is_vertical: true })
-
-// API endpoint to serve metadata
-app.get('/api/video-metadata/:author/:permlink', (req, res) => {
-  const { author, permlink } = req.params;
-  const video = db.collection('videos').findOne({ author, permlink });
-  
-  res.json({
-    width: video.video_metadata.width,
-    height: video.video_metadata.height,
-    isVertical: video.is_vertical,
-    aspectRatio: video.aspect_ratio
-  });
-});</code>
-            </div>
-        </div>
-
-        <!-- Mobile App Layout Modes -->
-        <div class="demo-section">
-            <h2>8. 📱 Mobile App Integration - Layout Parameter</h2>
-            <p><strong>Problem:</strong> Mobile apps can't always adapt iframe sizes dynamically. <strong>Solution:</strong> Use the <code>&layout=</code> parameter for universal containers!</p>
+            <h2>7. 📱 Mobile App Integration - No Scrollbars</h2>
+            <p><strong>Problem:</strong> Mobile apps can't always adapt iframe sizes dynamically. <strong>Solution:</strong> Use the <code>&layout=mobile</code> parameter for universal containers that work with any video orientation!</p>
             
             <div style="background: #2d5a27; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #4caf50;">
                 <strong style="color: #a5d6a7;">✨ NEW: Layout Modes for Universal Mobile Compatibility!</strong><br>
@@ -1105,7 +875,7 @@ https://play.3speak.tv/embed?v=author/permlink&mode=iframe&layout=square&noscrol
 
         <!-- For Developers -->
         <div class="demo-section">
-            <h2>9. 🛠️ For Frontend Developers</h2>
+            <h2>8. 🛠️ For Frontend Developers</h2>
             <p>Simple JavaScript to auto-embed 3speak URLs:</p>
             
             <div class="code-block">
